@@ -22,12 +22,13 @@ BtcTab.prototype.angular = function (module)
     $scope.btcConnected = false;
     $scope.emailError = false;
     $scope.generalError = false;
+    $scope.bitstampConnected = false;
 
-    $scope.toggle_instructions = function () {
+    $scope.toggle_instructions = function() {
       $scope.showInstructions = !$scope.showInstructions;
     };
 
-    $scope.toggle_btc_instructions = function (){
+    $scope.toggle_btc_instructions = function() {
         $scope.showBtcInstructions = !$scope.showBtcInstructions;
     }
 
@@ -38,7 +39,7 @@ BtcTab.prototype.angular = function (module)
     };
 
     // TODO don't worry, the whole thing needs to be rewritten
-    var btcwatcher = $scope.$watch('B2R', function(){
+    var btcwatcher = $scope.$watch('B2R', function() {
       if ($scope.B2R && $scope.B2R.active) {
         $scope.btcConnected = true;
 
@@ -47,7 +48,7 @@ BtcTab.prototype.angular = function (module)
     }, true);
 
     // B2R Signup
-    $scope.B2RSignup = function () {
+    $scope.B2RSignup = function() {
       var issuer = Options.b2rAddress;
       var currency = 'BTC';
       var amount = '100000000000';
@@ -59,10 +60,10 @@ BtcTab.prototype.angular = function (module)
 
       keychain.requestSecret(id.account, id.username, function (err, secret) {
         if (err) {
-          console.log("client: trust profile: error while " +
-            "unlocking wallet: ", err);
-          $scope.mode = "error";
-          $scope.error_type = "unlockFailed";
+          console.log('client: trust profile: error while ' +
+            'unlocking wallet: ', err);
+          $scope.mode = 'error';
+          $scope.error_type = 'unlockFailed';
 
           return;
         }
@@ -116,7 +117,7 @@ BtcTab.prototype.angular = function (module)
       rpTracker.track('B2R Shared Email');
     };
 
-    $scope.save_btc_account = function (){
+    $scope.save_btc_account = function() {
 
         $scope.btcLoading = true;
 
@@ -125,7 +126,7 @@ BtcTab.prototype.angular = function (module)
             {reference_date: new Date(+new Date() + 5*60000)}
         );
 
-        amount.set_issuer("rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B");
+        amount.set_issuer('rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B');
 
         if (!amount.is_valid()) {
           // Invalid amount. Indicates a bug in one of the validators.
@@ -186,20 +187,20 @@ BtcTab.prototype.angular = function (module)
               $scope.btc_tx_result = 'failed';
               break;
             case 'tel':
-              $scope.btc_tx_result = "local";
+              $scope.btc_tx_result = 'local';
               break;
             case 'tep':
               console.warn('Unhandled engine status encountered!');
           }
-          if ($scope.btc_tx_result=="cleared"){
-            $scope.btcConnected = true;
+          if ($scope.btc_tx_result == 'cleared') {
+            $scope.bitstampConnected = true;
             $scope.showBtcInstructions = true;
 
           }
           console.log($scope.btc_tx_result);
         }
 
-        keychain.requestSecret(id.account, id.username, function (err, secret) {
+        keychain.requestSecret(id.account, id.username, function(err, secret) {
           // XXX Error handling
           if (err) {
             $scope.btcLoading = false;
@@ -211,20 +212,13 @@ BtcTab.prototype.angular = function (module)
 
           tx.secret(secret);
           tx.submit();
-
-
         });
         
       };
 
-    $scope.$watch('lines', function () {
-        if($scope.lines['rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59BBTC']){
-          $scope.btcConnected = true;
-        }
-        else {
-          $scope.btcConnected = false;
-        }  
-      }, true);
+    $scope.$watch('lines', function() {
+        $scope.bitstampConnected = !!$scope.lines.rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59BBTC;
+    }, true);
 
     $scope.$watch('account', function() {
         $scope.can_add_trust = false;
@@ -235,7 +229,7 @@ BtcTab.prototype.angular = function (module)
             $scope.can_add_trust = true;
           }
         }
-      }, true);
+    }, true);
   }]);
 };
 
